@@ -48,7 +48,7 @@ export function useIsRealmOwner() {
       const bnId = ethers.BigNumber.from(id)
       const owner = await getRealmContract().ownerOf(bnId)
 
-      return owner.toLowerCase()
+      return owner.toLowerCase() === account
     },
     { enabled: Boolean(account) && Boolean(id) }
   )
