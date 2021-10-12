@@ -14,6 +14,13 @@ export default function Timers() {
     timers,
   } = useRealmTimers()
 
+  if (
+    timers.status === 'success' &&
+    [canBuildCity, canCollect, canTerraform].every(Boolean)
+  ) {
+    return null
+  }
+
   return (
     <RealmSection title="Timers">
       <HStack align="flex-start" spacing={10}>
