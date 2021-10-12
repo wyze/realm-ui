@@ -65,7 +65,6 @@ export default function Layout({ children }: LayoutProps) {
         mt="3ch"
         maxW="container.xl"
       >
-        <Box mb="6ch" />
         {children}
       </Container>
     </Flex>
