@@ -45,7 +45,7 @@ export default function Home() {
       </Head>
 
       <HStack h={650} px={10} py={5} spacing={10} w="60vw">
-        <VStack spacing={150} w="20vw">
+        <VStack spacing={150} w="17vw">
           <Heading as="h3" size="md">
             Total Realms
           </Heading>
@@ -56,9 +56,9 @@ export default function Home() {
             View Realm
           </Heading>
         </VStack>
-        <Divider orientation="vertical" />
+        <Divider borderColor="brand.900" orientation="vertical" />
         <VStack spacing={115}>
-          <Heading>{currentTokens.data}</Heading>
+          <Heading>{currentTokens.data ?? 'Unknown'}</Heading>
           <Mint />
           <Search />
         </VStack>

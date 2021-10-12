@@ -16,6 +16,7 @@ const mintPrice = '0.01'
 
 const realmModel = createModel(
   {
+    account: '',
     id: '',
     name: '',
   },
@@ -24,6 +25,7 @@ const realmModel = createModel(
       mint: () => ({}),
       reset: () => ({}),
       reverted: () => ({}),
+      updateAccount: (value: string) => ({ value }),
       updateId: (value: string) => ({ value }),
       updateName: (value: string) => ({ value }),
     },
@@ -35,6 +37,10 @@ const machine = realmModel.createMachine(
     context: realmModel.initialContext,
     initial: 'invalid',
     on: {
+      updateAccount: {
+        actions: realmModel.assign({ account: (_, event) => event.value }),
+        target: '.validating',
+      },
       updateId: {
         actions: realmModel.assign({ id: (_, event) => event.value }),
         target: '.validating',
@@ -74,7 +80,7 @@ const machine = realmModel.createMachine(
         const id = Number(context.id.trim())
         const name = context.name.trim()
 
-        return !isNaN(id) && Boolean(name)
+        return !isNaN(id) && [context.account, id, name].every(Boolean)
       },
     },
   }
@@ -84,8 +90,8 @@ export default function Mint() {
   const queryClient = useQueryClient()
   const toast = useToast()
 
+  const { account, status } = useAccount()
   const [state, send] = useMachine(machine)
-  const { status } = useAccount()
 
   const mint = useMutation(
     async () => {
@@ -139,14 +145,30 @@ export default function Mint() {
     }
   }, [queryClient])
 
+  useEffect(() => {
+    send(realmModel.events.updateAccount(account))
+  }, [account, send])
+
   return (
-    <VStack spacing="-px" w={250}>
+    <VStack spacing="-px" w="100%">
       {mint.status !== 'success' ? (
         <>
+          <Input
+            borderRadius={0}
+            borderTopLeftRadius="md"
+            borderTopRightRadius="md"
+            isDisabled={mint.status === 'loading'}
+            onChange={(event) =>
+              send(realmModel.events.updateName(event.target.value))
+            }
+            placeholder="Name"
+            value={state.context.name}
+          />
           <HStack spacing="-px">
             <Input
+              borderBottomLeftRadius="md"
               borderRadius={0}
-              borderTopLeftRadius="md"
+              flexBasis="50%"
               isDisabled={mint.status === 'loading'}
               onChange={(event) =>
                 send(realmModel.events.updateId(event.target.value))
@@ -155,29 +177,20 @@ export default function Mint() {
               type="number"
               value={state.context.id}
             />
-            <Input
-              borderRadius={0}
-              borderTopRightRadius="md"
-              isDisabled={mint.status === 'loading'}
-              onChange={(event) =>
-                send(realmModel.events.updateName(event.target.value))
-              }
-              placeholder="Name"
-              value={state.context.name}
-            />
+            <Button
+              borderBottomLeftRadius={0}
+              borderTopLeftRadius={0}
+              borderTopRightRadius={0}
+              colorScheme="brand"
+              isDisabled={!state.matches('valid')}
+              isFullWidth
+              isLoading={status === 'loading' || mint.status === 'loading'}
+              onClick={() => mint.mutate()}
+              variant="outline"
+            >
+              Create Realm for {mintPrice}
+            </Button>
           </HStack>
-          <Button
-            borderTopLeftRadius={0}
-            borderTopRightRadius={0}
-            colorScheme="teal"
-            isDisabled={!state.matches('valid')}
-            isFullWidth
-            isLoading={status === 'loading' || mint.status === 'loading'}
-            onClick={() => mint.mutate()}
-            variant="outline"
-          >
-            Create Realm for {mintPrice}
-          </Button>
         </>
       ) : (
         <>
