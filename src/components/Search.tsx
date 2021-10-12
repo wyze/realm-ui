@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router'
 import { useState } from 'react'
 import NextLink from 'next/link'
 
@@ -8,6 +9,7 @@ import { usePrefetchRealm } from '../lib/queries'
 
 export default function Search() {
   const prefetchRealm = usePrefetchRealm()
+  const router = useRouter()
   const [id, setId] = useState('')
   const realmId = id.trim()
 
@@ -15,6 +17,12 @@ export default function Search() {
     <InputGroup>
       <Input
         onChange={(event) => setId(event.target.value)}
+        onKeyPress={(event) => {
+          if (event.key === 'Enter' && Boolean(realmId)) {
+            prefetchRealm(realmId)
+            router.push(`/realm/${realmId}`)
+          }
+        }}
         placeholder="Realm ID (e.g. 777)"
         type="number"
         value={id}
