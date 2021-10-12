@@ -126,7 +126,7 @@ export async function getTimersForRealm({
   const gold = bnGold.toNumber()
   const terraformTime = bnTerraformTime.toNumber() * 1000
 
-  const nextCityCost = cityBuildCost + cities * 2
+  const nextCityCost = cities > 0 ? cityBuildCost + cities * 2 : 0
 
   return { cityBuildTime, collectTime, gold, nextCityCost, terraformTime }
 }
