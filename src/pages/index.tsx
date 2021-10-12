@@ -45,7 +45,7 @@ export default function Home() {
       </Head>
 
       <HStack h={650} px={10} py={5} spacing={10} w="60vw">
-        <VStack spacing={150} w="20vw">
+        <VStack spacing={150} w="17vw">
           <Heading as="h3" size="md">
             Total Realms
           </Heading>

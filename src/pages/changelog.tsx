@@ -1,6 +1,24 @@
+import type { ReactNode } from 'react'
+
 import Head from 'next/head'
 
-import { Divider, HStack, Heading, Text, VStack } from '@chakra-ui/react'
+import { Divider, Grid, Heading, Text, VStack } from '@chakra-ui/react'
+
+type ChangelogSectionProps = {
+  children: ReactNode
+}
+
+function ChangelogDivider() {
+  return <Divider orientation="vertical" h="calc(100% + 50px)" ml="30px" />
+}
+
+function ChangelogSection({ children }: ChangelogSectionProps) {
+  return (
+    <Grid templateColumns="max-content 60px 1fr" pb="50px">
+      {children}
+    </Grid>
+  )
+}
 
 export default function Changelog() {
   return (
@@ -13,9 +31,9 @@ export default function Changelog() {
         <Heading fontWeight="normal" mb="20">
           Changelog
         </Heading>
-        <HStack align="flex-start" h={500} spacing={50}>
+        <ChangelogSection>
           <Text minW={140}>October 12th, 2021</Text>
-          <Divider orientation="vertical" />
+          <ChangelogDivider />
           <VStack align="flex-start">
             <Heading as="h4" fontWeight="semibold" mb="2" size="md">
               UI, resources, cities, timers, and actions too!
@@ -50,10 +68,10 @@ export default function Changelog() {
               detail view that you can interact with.
             </Text>
           </VStack>
-        </HStack>
-        <HStack align="flex-start" h={225} spacing={50}>
+        </ChangelogSection>
+        <ChangelogSection>
           <Text minW={140}>October 8th, 2021</Text>
-          <Divider orientation="vertical" />
+          <ChangelogDivider />
           <VStack align="flex-start">
             <Heading as="h4" fontWeight="semibold" mb="2" size="md">
               Initial public release
@@ -70,7 +88,7 @@ export default function Changelog() {
               once per year!
             </Text>
           </VStack>
-        </HStack>
+        </ChangelogSection>
       </VStack>
     </>
   )

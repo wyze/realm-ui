@@ -140,13 +140,25 @@ export default function Mint() {
   }, [queryClient])
 
   return (
-    <VStack spacing="-px" w={250}>
+    <VStack spacing="-px" w="100%">
       {mint.status !== 'success' ? (
         <>
+          <Input
+            borderRadius={0}
+            borderTopLeftRadius="md"
+            borderTopRightRadius="md"
+            isDisabled={mint.status === 'loading'}
+            onChange={(event) =>
+              send(realmModel.events.updateName(event.target.value))
+            }
+            placeholder="Name"
+            value={state.context.name}
+          />
           <HStack spacing="-px">
             <Input
+              borderBottomLeftRadius="md"
               borderRadius={0}
-              borderTopLeftRadius="md"
+              flexBasis="50%"
               isDisabled={mint.status === 'loading'}
               onChange={(event) =>
                 send(realmModel.events.updateId(event.target.value))
@@ -155,29 +167,20 @@ export default function Mint() {
               type="number"
               value={state.context.id}
             />
-            <Input
-              borderRadius={0}
-              borderTopRightRadius="md"
-              isDisabled={mint.status === 'loading'}
-              onChange={(event) =>
-                send(realmModel.events.updateName(event.target.value))
-              }
-              placeholder="Name"
-              value={state.context.name}
-            />
+            <Button
+              borderBottomLeftRadius={0}
+              borderTopLeftRadius={0}
+              borderTopRightRadius={0}
+              colorScheme="brand"
+              isDisabled={!state.matches('valid')}
+              isFullWidth
+              isLoading={status === 'loading' || mint.status === 'loading'}
+              onClick={() => mint.mutate()}
+              variant="outline"
+            >
+              Create Realm for {mintPrice}
+            </Button>
           </HStack>
-          <Button
-            borderTopLeftRadius={0}
-            borderTopRightRadius={0}
-            colorScheme="brand"
-            isDisabled={!state.matches('valid')}
-            isFullWidth
-            isLoading={status === 'loading' || mint.status === 'loading'}
-            onClick={() => mint.mutate()}
-            variant="outline"
-          >
-            Create Realm for {mintPrice}
-          </Button>
         </>
       ) : (
         <>
