@@ -23,7 +23,7 @@ import { useMutation, useQuery, useQueryClient } from 'react-query'
 
 import { getRealmContract } from '../../lib/contract'
 import { getRealmById } from '../../lib/queries'
-import { useAccount, useRealmTimers } from '../../lib/hooks'
+import { useAccount, useIsRealmOwner, useRealmTimers } from '../../lib/hooks'
 import Actions from '../../components/Actions'
 import RealmAttribute from '../../components/RealmAttribute'
 import RealmBox from '../../components/RealmBox'
@@ -34,6 +34,7 @@ const isValidFeature = (featureId: number): featureId is 0 | 1 | 2 =>
   featureId < 3
 
 export default function Realm() {
+  const isRealmOwner = useIsRealmOwner()
   const queryClient = useQueryClient()
   const router = useRouter()
   const toast = useToast()
@@ -147,7 +148,7 @@ export default function Realm() {
                   {data.features.map(({ feature }, index) => (
                     <Tag key={feature}>
                       <TagLabel>{feature}</TagLabel>
-                      {canTerraform && isValidFeature(index) ? (
+                      {canTerraform && isRealmOwner && isValidFeature(index) ? (
                         <Tooltip
                           label="Terraform"
                           placement="top"
