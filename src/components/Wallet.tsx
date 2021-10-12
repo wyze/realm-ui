@@ -1,4 +1,4 @@
-import { Button, Container, Flex, Text, useBoolean } from '@chakra-ui/react'
+import { Button, Flex, HStack, Text, useBoolean } from '@chakra-ui/react'
 import { useMutation, useQueryClient } from 'react-query'
 
 export default function Wallet() {
@@ -18,18 +18,19 @@ export default function Wallet() {
   )
 
   return (
-    <Container display="flex" justifyContent="flex-end" maxW="container.lg">
+    <HStack display="flex" justifyContent="flex-end" maxW="container.lg">
       {account ? (
         <Flex
           align="center"
-          bg="teal.50"
-          borderRadius="md"
+          bg="brand.600"
+          borderRadius="sm"
           onMouseEnter={setHover.on}
           onMouseLeave={setHover.off}
-          p="2"
+          px="2"
+          py="1"
           gridGap="3"
         >
-          <Text display="flex" fontSize="sm">
+          <Text color="white" display="flex" fontSize="sm">
             <Text
               as="span"
               display="inline-block"
@@ -51,10 +52,12 @@ export default function Wallet() {
           colorScheme="orange"
           isLoading={connect.status === 'loading'}
           onClick={() => connect.mutate()}
+          size="sm"
+          m="-1.5px"
         >
           Connect Wallet
         </Button>
       )}
-    </Container>
+    </HStack>
   )
 }

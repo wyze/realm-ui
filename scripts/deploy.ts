@@ -24,7 +24,7 @@ async function main() {
     const file = './package.json'
     const contents = await readFile(file, 'utf8')
 
-    await writeFile(file, contents.replace(/0x[(^\s|")]+/, contract.address))
+    await writeFile(file, contents.replace(/0x[^\s"]+/, contract.address))
   }
 }
 

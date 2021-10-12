@@ -26,20 +26,20 @@ export default function Layout({ children }: LayoutProps) {
   }, [account, queryClient])
 
   return (
-    <Flex direction="column" flex="1" minHeight="100vh">
-      <Box boxShadow="md">
+    <Flex direction="column" flex="1" minHeight="100vh" pb="10">
+      <Box boxShadow="md" bg="brand.900">
         <Flex align="center" p="5">
-          <Heading color="cyan.700" size="md">
+          <Heading size="md">
             <NextLink href="/">Realm</NextLink>
           </Heading>
 
-          <Flex gridGap={5} ml="auto">
+          <Flex align="center" gridGap={5} ml="auto">
+            <Wallet />
             <NextLink href="/changelog" passHref>
-              <Link color="gray.500" fontWeight="bold">Changelog</Link>
+              <Link fontWeight="bold">Changelog</Link>
             </NextLink>
             <Link
               href={`https://${explorer}/address/${address}`}
-              color="blue.600"
               isExternal
               display="flex"
               alignItems="center"
@@ -49,7 +49,6 @@ export default function Layout({ children }: LayoutProps) {
             </Link>
             <Link
               href="https://github.com/wyze/realm-ui"
-              color="blue.600"
               isExternal
               display="flex"
               alignItems="center"
@@ -66,7 +65,6 @@ export default function Layout({ children }: LayoutProps) {
         mt="3ch"
         maxW="container.xl"
       >
-        <Wallet />
         <Box mb="6ch" />
         {children}
       </Container>

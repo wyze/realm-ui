@@ -56,7 +56,7 @@ export default function Home() {
             View Realm
           </Heading>
         </VStack>
-        <Divider orientation="vertical" />
+        <Divider borderColor="brand.900" orientation="vertical" />
         <VStack spacing={115}>
           <Heading>{currentTokens.data}</Heading>
           <Mint />

@@ -169,7 +169,7 @@ export default function Mint() {
           <Button
             borderTopLeftRadius={0}
             borderTopRightRadius={0}
-            colorScheme="teal"
+            colorScheme="brand"
             isDisabled={!state.matches('valid')}
             isFullWidth
             isLoading={status === 'loading' || mint.status === 'loading'}

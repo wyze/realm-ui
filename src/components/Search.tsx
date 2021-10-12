@@ -3,12 +3,11 @@ import NextLink from 'next/link'
 
 import { ArrowRight } from 'lucide-react'
 import { IconButton, Input, InputGroup, Link } from '@chakra-ui/react'
-import { useQueryClient } from 'react-query'
 
-import { getRealmById } from '../lib/queries'
+import { usePrefetchRealm } from '../lib/queries'
 
 export default function Search() {
-  const queryClient = useQueryClient()
+  const prefetchRealm = usePrefetchRealm()
   const [id, setId] = useState('')
   const realmId = id.trim()
 
@@ -28,9 +27,7 @@ export default function Search() {
           icon={<ArrowRight />}
           isDisabled={realmId === ''}
           ml="-px"
-          onMouseEnter={() =>
-            queryClient.prefetchQuery(['realm', realmId], getRealmById)
-          }
+          onMouseEnter={() => prefetchRealm(realmId)}
           variant="link"
         />
       </NextLink>

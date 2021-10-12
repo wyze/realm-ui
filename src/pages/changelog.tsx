@@ -9,11 +9,49 @@ export default function Changelog() {
         <title>Changelog | Realm</title>
       </Head>
 
-      <VStack align="flex-start" spacing={30} w="70vw">
-        <Heading fontWeight="normal" mb="10">
+      <VStack align="flex-start" spacing={0} w="70vw">
+        <Heading fontWeight="normal" mb="20">
           Changelog
         </Heading>
-        <HStack align="flex-start" h={250} spacing={50}>
+        <HStack align="flex-start" h={500} spacing={50}>
+          <Text minW={140}>October 12th, 2021</Text>
+          <Divider orientation="vertical" />
+          <VStack align="flex-start">
+            <Heading as="h4" fontWeight="semibold" mb="2" size="md">
+              UI, resources, cities, timers, and actions too!
+            </Heading>
+            <Text>
+              First and foremost, we have updated some UI to be more in line
+              with Realm&apos;s branding.
+            </Text>
+            <Text>
+              We have added information about your <strong>cities</strong>. This
+              includes total number of cities you have as well as a timer for
+              when you can build your next one. This will either be a time delay
+              or a gold delay. Also, once you meet the requirements you can
+              build your city right here too!
+            </Text>
+            <Text>
+              Next, we added all you need to know about your available
+              resources. This includes the amount per turn you get for{' '}
+              <strong>Gold</strong> and <strong>Religion</strong>, based on your
+              built cities.
+            </Text>
+            <Text>
+              Additionally, we added a <strong>Timers</strong> section. In here
+              you can see when you can do your next actions for various things.
+              Currently, we track <strong>Terraform</strong>,{' '}
+              <strong>Build City</strong>, and <strong>Collect</strong>.
+            </Text>
+            <Text>
+              Which brings us to our last feature, the ability to{' '}
+              <strong>collect</strong> your per turn resources. If available,
+              you will see an <strong>Actions</strong> section in your Realm
+              detail view that you can interact with.
+            </Text>
+          </VStack>
+        </HStack>
+        <HStack align="flex-start" h={225} spacing={50}>
           <Text minW={140}>October 8th, 2021</Text>
           <Divider orientation="vertical" />
           <VStack align="flex-start">

@@ -9,6 +9,24 @@ import { QueryClient, QueryClientProvider } from 'react-query'
 import Layout from '../components/Layout'
 
 const theme = extendTheme({
+  colors: {
+    brand: {
+      600: '#8c6200',
+      900: '#ffb300',
+    },
+  },
+  components: {
+    Box: {
+      variants: {
+        realm: {
+          borderLeft: '1px solid #ffb30080',
+          borderTop: '2px solid #ffb300',
+          boxShadow: '10px 9px 0 #444',
+          width: '55vw',
+        },
+      },
+    },
+  },
   styles: {
     global: {
       'html, body': {
