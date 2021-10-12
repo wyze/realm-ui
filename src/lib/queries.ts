@@ -7,6 +7,10 @@ import { useQueryClient } from 'react-query'
 
 import { getCityContract, getDataContract, getRealmContract } from './contract'
 
+interface ErrorWithValue extends Error {
+  value: string
+}
+
 const dataIndexes = Array(7).fill(0)
 const featureIndexes = Array(3).fill(0)
 
@@ -33,7 +37,6 @@ export async function getRealmById({
   const realmContract = getRealmContract()
 
   const {
-    name,
     size: bnSize,
     createdAt: bnCreatedAt,
     partner,
@@ -62,9 +65,39 @@ export async function getRealmById({
     createdAt,
     features,
     foodBonus,
-    name,
     partner,
     size,
+  }
+}
+
+const isErrorWithValue = (value: unknown): value is ErrorWithValue => {
+  if (typeof value !== 'object' || value === null) {
+    return false
+  }
+
+  return 'value' in value
+}
+
+export async function getNameForRealm({
+  queryKey,
+}: QueryFunctionContext<['realm-name', string]>) {
+  const [, id] = queryKey
+
+  const bnId = ethers.BigNumber.from(id)
+
+  try {
+    const { name } = await getRealmContract().realms(bnId)
+
+    return name
+  } catch (error) {
+    if (isErrorWithValue(error)) {
+      return ethers.utils.toUtf8String(
+        error.value,
+        ethers.utils.Utf8ErrorFuncs.ignore
+      )
+    }
+
+    return 'Unknown'
   }
 }
 
@@ -136,6 +169,7 @@ export function usePrefetchRealm() {
 
   return useCallback(
     (id: string) => {
+      queryClient.prefetchQuery(['realm-name', id], getNameForRealm)
       queryClient.prefetchQuery(['realm', id], getRealmById)
       queryClient.prefetchQuery(
         ['realm', id, 'resources'],

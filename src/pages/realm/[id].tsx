@@ -9,6 +9,7 @@ import {
   HStack,
   Heading,
   Link,
+  Skeleton,
   Spinner,
   Tag,
   TagCloseButton,
@@ -21,8 +22,8 @@ import { Home } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 
+import { getNameForRealm, getRealmById } from '../../lib/queries'
 import { getRealmContract } from '../../lib/contract'
-import { getRealmById } from '../../lib/queries'
 import { useAccount, useIsRealmOwner, useRealmTimers } from '../../lib/hooks'
 import Actions from '../../components/Actions'
 import RealmAttribute from '../../components/RealmAttribute'
@@ -41,6 +42,10 @@ export default function Realm() {
 
   const { id } = router.query
   const { account } = useAccount()
+
+  const name = useQuery(['realm-name', String(id)], getNameForRealm, {
+    enabled: Boolean(account) && Boolean(id),
+  })
 
   const realm = useQuery(['realm', String(id)], getRealmById, {
     enabled: Boolean(account) && Boolean(id),
@@ -122,18 +127,22 @@ export default function Realm() {
   return (
     <>
       <Head>
-        {data.name ? (
+        {name.data ? (
           <title>
-            {data.name} (#{id}) | Realm
+            {name.data} (#{id}) | Realm
           </title>
         ) : null}
       </Head>
       <VStack spacing={10}>
-        <RealmBox>
-          <HStack h={325} px={20} py={5} spacing={10}>
-            <Heading>{data.name}</Heading>
+        <RealmBox w="75vw">
+          <HStack justify="center" h={325} px={20} py={5} spacing={10}>
+            {name.status === 'success' ? (
+              <Heading isTruncated>{name.data}</Heading>
+            ) : (
+              <Skeleton height="30px" />
+            )}
             <Divider orientation="vertical" />
-            <VStack align="flex-start" spacing={5}>
+            <VStack align="flex-start" spacing={5} minW="20vw">
               <HStack spacing={10}>
                 <RealmAttribute title="Age">
                   {formatDistanceToNow(new Date(data.createdAt))}
