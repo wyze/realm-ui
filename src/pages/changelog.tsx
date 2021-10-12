@@ -67,6 +67,12 @@ export default function Changelog() {
               you will see an <strong>Actions</strong> section in your Realm
               detail view that you can interact with.
             </Text>
+            <Text>
+              A few more small changes. You can now use the{' '}
+              <strong>Enter</strong> key when searching for your Realm. We have
+              widened the panel with your Realm name to see more of it. Also,
+              handle cases of UTF-8 encoded names.
+            </Text>
           </VStack>
         </ChangelogSection>
         <ChangelogSection>
