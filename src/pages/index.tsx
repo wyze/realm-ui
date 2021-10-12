@@ -58,7 +58,7 @@ export default function Home() {
         </VStack>
         <Divider borderColor="brand.900" orientation="vertical" />
         <VStack spacing={115}>
-          <Heading>{currentTokens.data}</Heading>
+          <Heading>{currentTokens.data ?? 'Unknown'}</Heading>
           <Mint />
           <Search />
         </VStack>

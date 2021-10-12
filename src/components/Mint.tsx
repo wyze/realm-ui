@@ -16,6 +16,7 @@ const mintPrice = '0.01'
 
 const realmModel = createModel(
   {
+    account: '',
     id: '',
     name: '',
   },
@@ -24,6 +25,7 @@ const realmModel = createModel(
       mint: () => ({}),
       reset: () => ({}),
       reverted: () => ({}),
+      updateAccount: (value: string) => ({ value }),
       updateId: (value: string) => ({ value }),
       updateName: (value: string) => ({ value }),
     },
@@ -35,6 +37,10 @@ const machine = realmModel.createMachine(
     context: realmModel.initialContext,
     initial: 'invalid',
     on: {
+      updateAccount: {
+        actions: realmModel.assign({ account: (_, event) => event.value }),
+        target: '.validating',
+      },
       updateId: {
         actions: realmModel.assign({ id: (_, event) => event.value }),
         target: '.validating',
@@ -74,7 +80,7 @@ const machine = realmModel.createMachine(
         const id = Number(context.id.trim())
         const name = context.name.trim()
 
-        return !isNaN(id) && Boolean(name)
+        return !isNaN(id) && [context.account, id, name].every(Boolean)
       },
     },
   }
@@ -84,8 +90,8 @@ export default function Mint() {
   const queryClient = useQueryClient()
   const toast = useToast()
 
+  const { account, status } = useAccount()
   const [state, send] = useMachine(machine)
-  const { status } = useAccount()
 
   const mint = useMutation(
     async () => {
@@ -138,6 +144,10 @@ export default function Mint() {
       })
     }
   }, [queryClient])
+
+  useEffect(() => {
+    send(realmModel.events.updateAccount(account))
+  }, [account, send])
 
   return (
     <VStack spacing="-px" w="100%">
