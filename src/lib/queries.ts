@@ -5,13 +5,19 @@ import { useCallback } from 'react'
 
 import { useQueryClient } from 'react-query'
 
-import { getCityContract, getDataContract, getRealmContract } from './contract'
+import {
+  getCityContract,
+  getDataContract,
+  getFarmContract,
+  getRealmContract,
+} from './contract'
 
 interface ErrorWithValue extends Error {
   value: string
 }
 
 const dataIndexes = Array(7).fill(0)
+const farmIndexes = Array(9).fill(0)
 const featureIndexes = Array(3).fill(0)
 
 const resourceColors: Record<string, string> = {
@@ -22,6 +28,18 @@ const resourceColors: Record<string, string> = {
   Reputation: '#996a6a',
   Technology: '#f1ea15',
   Workforce: '#6b84cc',
+}
+
+const farmIcons: Record<string, string> = {
+  Chocolate: '🍫',
+  Coffee: '☕️',
+  Corn: '🌽',
+  Honey: '🍯',
+  None: '🚜',
+  Rice: '🍚',
+  Tea: '🍃',
+  Wheat: '🍞',
+  Wine: '🍷',
 }
 
 const cityBuildCost = 50
@@ -68,6 +86,44 @@ export async function getRealmById({
     partner,
     size,
   }
+}
+
+export async function getFarmsForRealm({
+  queryKey,
+}: QueryFunctionContext<['realm', string, 'farms']>) {
+  const [, id] = queryKey
+
+  const bnId = ethers.BigNumber.from(id)
+  const farmContract = getFarmContract()
+
+  const bnTotalFarms = await farmContract.totalFarms(bnId)
+  const totalFarms = bnTotalFarms.toNumber()
+
+  const resourceNames = await Promise.all(
+    farmIndexes.map(async (_, index) => farmContract.resourceNames(index))
+  )
+  const resources = await Promise.all(
+    resourceNames.map(async (name, index) => {
+      const bnValue = await farmContract.resources(bnId, index)
+      const value = bnValue.toNumber()
+      const icon = farmIcons[name]
+
+      return { icon, name, value }
+    })
+  )
+
+  const farms = await Promise.all(
+    Array(totalFarms)
+      .fill(0)
+      .map(async (_, index) => {
+        const bnResourceId = await farmContract.farms(bnId, index)
+        const resourceId = bnResourceId.toNumber()
+
+        return resourceNames[resourceId]
+      })
+  )
+
+  return { farms, resources }
 }
 
 const isErrorWithValue = (value: unknown): value is ErrorWithValue => {
@@ -147,12 +203,14 @@ export async function getTimersForRealm({
   const dataContract = getDataContract()
   const realmContract = getRealmContract()
 
+  const bnBuildTime = await dataContract.buildTime(bnId, 0)
   const bnCities = await cityContract.totalCities(bnId)
   const bnCityBuildTime = await cityContract.buildTime(bnId)
   const bnCollectTime = await dataContract.collectTime(bnId)
   const bnGold = await dataContract.data(bnId, 0) // Gold
   const bnTerraformTime = await realmContract.terraformTime(bnId)
 
+  const buildTime = bnBuildTime.toNumber() * 1000
   const cities = bnCities.toNumber()
   const cityBuildTime = bnCityBuildTime.toNumber() * 1000
   const collectTime = bnCollectTime.toNumber() * 1000
@@ -161,7 +219,14 @@ export async function getTimersForRealm({
 
   const nextCityCost = cities > 0 ? cityBuildCost + cities * 2 : 0
 
-  return { cityBuildTime, collectTime, gold, nextCityCost, terraformTime }
+  return {
+    buildTime,
+    cityBuildTime,
+    collectTime,
+    gold,
+    nextCityCost,
+    terraformTime,
+  }
 }
 
 export function usePrefetchRealm() {

@@ -28,7 +28,7 @@ export default function Changelog() {
       </Head>
 
       <VStack align="flex-start" spacing={0} w="70vw">
-        <Heading fontWeight="normal" mb="20">
+        <Heading fontWeight="normal" py="20">
           Changelog
         </Heading>
         <ChangelogSection>

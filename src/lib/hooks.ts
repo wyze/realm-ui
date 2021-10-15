@@ -68,6 +68,11 @@ export function useRealmTimers() {
 
   const blockTimestamp = useBlockTimestamp()
 
+  const canBuild =
+    blockTimestamp.status === 'success' && timers.status === 'success'
+      ? isAfter(blockTimestamp.data, timers.data.buildTime)
+      : false
+
   const canCollect =
     blockTimestamp.status === 'success' && timers.status === 'success'
       ? isAfter(blockTimestamp.data, timers.data.collectTime)
@@ -91,6 +96,7 @@ export function useRealmTimers() {
   const canBuildCity = hasEnoughGoldForCity && hasWaitedEnoughForCity
 
   return {
+    canBuild,
     canBuildCity,
     canCollect,
     canTerraform,
