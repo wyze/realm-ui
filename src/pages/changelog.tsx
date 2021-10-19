@@ -32,6 +32,32 @@ export default function Changelog() {
           Changelog
         </Heading>
         <ChangelogSection>
+          <Text minW={140}>October 19th, 2021</Text>
+          <ChangelogDivider />
+          <VStack align="flex-start">
+            <Heading as="h4" fontWeight="semibold" mb="2" size="md">
+              Farms and the build queue.
+            </Heading>
+            <Text>
+              We have added integration with the Farm contract. You can see the
+              resources all your farms have produced. As well as seeing how many
+              many farms you have of each resource type.
+            </Text>
+            <Text>
+              With this, we have updated the UI on the detail screen to try and
+              split up into sections so it is not all on one page. You will
+              notice we now have an <strong>Info</strong> tab as well as the new{' '}
+              <strong>Farms</strong> tab.
+            </Text>
+            <Text>
+              Additionally, a <strong>Build Queue</strong> pane has been added
+              to the Info tab. Here you will see when you can build additional
+              structures like Farms, Mines, etc. It also shows information
+              regarding when the limit of your queue will increase.
+            </Text>
+          </VStack>
+        </ChangelogSection>
+        <ChangelogSection>
           <Text minW={140}>October 12th, 2021</Text>
           <ChangelogDivider />
           <VStack align="flex-start">
