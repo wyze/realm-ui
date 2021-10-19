@@ -7,6 +7,7 @@ import {
   HStack,
   Heading,
   Link,
+  SimpleGrid,
   Spinner,
   Tag,
   TagCloseButton,
@@ -23,9 +24,10 @@ import { getRealmById } from '../../../lib/queries'
 import { getRealmContract } from '../../../lib/contract'
 import { useAccount, useIsRealmOwner, useRealmTimers } from '../../../lib/hooks'
 import Actions from '../../../components/Actions'
+import BuildQueue from '../../../components/BuildQueue'
 import DetailLayout from '../../../components/DetailLayout'
 import RealmAttribute from '../../../components/RealmAttribute'
-import RealmBox from '../../../components/RealmBox'
+import RealmSection from '../../../components/RealmSection'
 import Resources from '../../../components/Resources'
 import Timers from '../../../components/Timers'
 
@@ -124,44 +126,39 @@ export default function Realm() {
 
   return (
     <DetailLayout>
-      <RealmBox>
-        <HStack justify="center" h={225} px={20} py={5} spacing={10}>
-          <VStack align="flex-start" spacing={5} minW="20vw">
-            <HStack spacing={10}>
-              <RealmAttribute title="Age">
-                {formatDistanceToNow(new Date(data.createdAt))}
-              </RealmAttribute>
-              <RealmAttribute title="Cities">{data.cities}</RealmAttribute>
+      <RealmSection title="Info">
+        <SimpleGrid columns={2} rows={2} spacing={2}>
+          <RealmAttribute title="Age">
+            {formatDistanceToNow(new Date(data.createdAt))}
+          </RealmAttribute>
+          <RealmAttribute title="Land Size">
+            {data.size.toLocaleString()} sq mi
+          </RealmAttribute>
+          <RealmAttribute title="Cities">{data.cities}</RealmAttribute>
+          <RealmAttribute title="Geographical Features">
+            <HStack spacing={2}>
+              {data.features.map(({ feature }, index) => (
+                <Tag key={`${feature}.${index}`}>
+                  <TagLabel>{feature}</TagLabel>
+                  {canTerraform && isRealmOwner && isValidFeature(index) ? (
+                    <Tooltip
+                      label="Terraform"
+                      placement="top"
+                      shouldWrapChildren
+                    >
+                      <TagCloseButton onClick={() => terraform.mutate(index)} />
+                    </Tooltip>
+                  ) : null}
+                </Tag>
+              ))}
             </HStack>
-            <RealmAttribute title="Land Size">
-              {data.size.toLocaleString()} sq mi
-            </RealmAttribute>
-            <RealmAttribute title="Geographical Features">
-              <HStack spacing={2}>
-                {data.features.map(({ feature }, index) => (
-                  <Tag key={feature}>
-                    <TagLabel>{feature}</TagLabel>
-                    {canTerraform && isRealmOwner && isValidFeature(index) ? (
-                      <Tooltip
-                        label="Terraform"
-                        placement="top"
-                        shouldWrapChildren
-                      >
-                        <TagCloseButton
-                          onClick={() => terraform.mutate(index)}
-                        />
-                      </Tooltip>
-                    ) : null}
-                  </Tag>
-                ))}
-              </HStack>
-            </RealmAttribute>
-          </VStack>
-        </HStack>
-      </RealmBox>
+          </RealmAttribute>
+        </SimpleGrid>
+      </RealmSection>
       <Actions />
       <Resources />
       <Timers />
+      <BuildQueue />
     </DetailLayout>
   )
 }

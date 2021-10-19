@@ -17,17 +17,26 @@ import { useAccount } from '../lib/hooks'
 import RealmSection from './RealmSection'
 
 type ResourceProps = {
-  color: string
   name: string
   perTurn?: number
   sx?: CSSObject
-  value: number
+  value: string | number
 }
 
-function Resource({ color, name, perTurn, sx, value }: ResourceProps) {
+const resourceColors: Record<string, string> = {
+  Culture: '#d45caa',
+  Food: '#83c760',
+  Gold: '#ffb300',
+  Religion: '#a162dc',
+  Reputation: '#996a6a',
+  Technology: '#f1ea15',
+  Workforce: '#6b84cc',
+}
+
+export function Resource({ name, perTurn, sx, value }: ResourceProps) {
   return (
     <HStack sx={sx}>
-      <Box bg={color} h={3} w={3} />
+      <Box bg={resourceColors[name]} h={3} w={3} />
       <Text fontSize="sm">{name}:</Text>
       <Text fontSize="sm" fontWeight="semibold">
         {value.toLocaleString()}

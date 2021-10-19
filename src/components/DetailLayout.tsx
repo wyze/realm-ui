@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import Head from 'next/head'
 import NextLink from 'next/link'
 
-import { Grid, Heading, Link, Skeleton, VStack } from '@chakra-ui/react'
+import { Button, Grid, Heading, Skeleton, VStack } from '@chakra-ui/react'
 import { useQuery } from 'react-query'
 
 import { getNameForRealm } from '../lib/queries'
@@ -37,7 +37,7 @@ export default function DetailLayout({ children }: DetailLayoutProps) {
       </Head>
       <Grid
         h="calc(100vh - 69px)"
-        templateColumns="12vw 83vw"
+        templateColumns="18vw 80vw"
         templateRows="max-content 1fr"
         mb="-2.5rem"
         w="100vw"
@@ -52,10 +52,14 @@ export default function DetailLayout({ children }: DetailLayoutProps) {
           spacing={2}
         >
           <NextLink href={`/realm/${id}`} passHref>
-            <Link py="2">Info</Link>
+            <Button as="a" bg="gray.50" isFullWidth justifyContent="flex-start" py="2">
+              Info
+            </Button>
           </NextLink>
           <NextLink href={`/realm/${id}/farms`} passHref>
-            <Link py="2">Farms</Link>
+            <Button as="a" bg="gray.50" isFullWidth justifyContent="flex-start" py="2">
+              Farms
+            </Button>
           </NextLink>
         </VStack>
         <Heading textAlign="center" as="h1" py="10" size="2xl">

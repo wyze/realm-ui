@@ -7,7 +7,6 @@ import RealmSection from './RealmSection'
 
 export default function Timers() {
   const {
-    canBuild,
     canBuildCity,
     canCollect,
     canTerraform,
@@ -17,7 +16,7 @@ export default function Timers() {
 
   if (
     timers.status === 'success' &&
-    [canBuild, canBuildCity, canCollect, canTerraform].every(Boolean)
+    [canBuildCity, canCollect, canTerraform].every(Boolean)
   ) {
     return null
   }
@@ -44,11 +43,6 @@ export default function Timers() {
                 {formatDistanceToNow(timers.data.collectTime)}
               </RealmAttribute>
             )}
-            {canBuild ? null : (
-              <RealmAttribute title="Build Queue">
-                {formatDistanceToNow(timers.data.buildTime)}
-              </RealmAttribute>
-            )}
           </>
         ) : (
           <>
@@ -59,9 +53,6 @@ export default function Timers() {
               <Skeleton height="20px" w="60px" />
             </RealmAttribute>
             <RealmAttribute title="Collect">
-              <Skeleton height="20px" w="60px" />
-            </RealmAttribute>
-            <RealmAttribute title="Build Queue">
               <Skeleton height="20px" w="60px" />
             </RealmAttribute>
           </>

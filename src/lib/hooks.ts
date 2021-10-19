@@ -7,7 +7,7 @@ import { useBoolean } from '@chakra-ui/react'
 import { useQuery } from 'react-query'
 
 import { getRealmContract } from './contract'
-import { getTimersForRealm } from './queries'
+import { getQueueForRealm, getTimersForRealm } from './queries'
 
 export function useAccount() {
   const [enabled, setEnabled] = useBoolean()
@@ -62,16 +62,17 @@ export function useRealmTimers() {
   const { id } = router.query
   const { account } = useAccount()
 
+  const queue = useQuery(['realm', String(id), 'queue'], getQueueForRealm, {
+    enabled: Boolean(account) && Boolean(id),
+  })
+
   const timers = useQuery(['realm', String(id), 'timers'], getTimersForRealm, {
     enabled: Boolean(account) && Boolean(id),
   })
 
   const blockTimestamp = useBlockTimestamp()
 
-  const canBuild =
-    blockTimestamp.status === 'success' && timers.status === 'success'
-      ? isAfter(blockTimestamp.data, timers.data.buildTime)
-      : false
+  const canBuild = queue.status === 'success' ? queue.data.canBuild : false
 
   const canCollect =
     blockTimestamp.status === 'success' && timers.status === 'success'

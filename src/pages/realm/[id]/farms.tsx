@@ -74,7 +74,7 @@ export default function Farms() {
         })
       },
       onSuccess: () => {
-        queryClient.invalidateQueries([['realm', id]])
+        queryClient.invalidateQueries(['realm', id])
 
         toast({
           title: 'Farm built successfully!',
@@ -107,9 +107,11 @@ export default function Farms() {
       </RealmSection>
       {farms.status === 'success' ? (
         <RealmSection title="Farms">
-          {farms.data.farms.map((farm) => (
-            <Text key={farm}>{farm}</Text>
-          ))}
+          <SimpleGrid columns={3} w="100%">
+            {Object.keys(farms.data.farms).map((name) => (
+              <Resource key={name} {...farms.data.farms[name]} />
+            ))}
+          </SimpleGrid>
         </RealmSection>
       ) : null}
       {canBuild ? (
