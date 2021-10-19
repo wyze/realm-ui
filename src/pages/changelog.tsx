@@ -41,7 +41,7 @@ export default function Changelog() {
             <Text>
               We have added integration with the Farm contract. You can see the
               resources all your farms have produced. As well as seeing how many
-              many farms you have of each resource type.
+              farms you have of each resource type.
             </Text>
             <Text>
               With this, we have updated the UI on the detail screen to try and
@@ -106,7 +106,7 @@ export default function Changelog() {
           <ChangelogDivider />
           <VStack align="flex-start">
             <Heading as="h4" fontWeight="semibold" mb="2" size="md">
-              Initial public release
+              Initial public release!
             </Heading>
             <Text>Hello traveller! I&apos;m glad you found us.</Text>
             <Text>
