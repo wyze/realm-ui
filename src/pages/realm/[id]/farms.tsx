@@ -15,7 +15,7 @@ import { useMutation, useQuery, useQueryClient } from 'react-query'
 
 import { getFarmsForRealm } from '../../../lib/queries'
 import { getFarmContract } from '../../../lib/contract'
-import { useAccount, useRealmTimers } from '../../../lib/hooks'
+import { useAccount, useIsRealmOwner, useRealmTimers } from '../../../lib/hooks'
 import DetailLayout from '../../../components/DetailLayout'
 import RealmSection from '../../../components/RealmSection'
 
@@ -38,6 +38,7 @@ function Resource({ icon, name, value }: ResourceProps) {
 }
 
 export default function Farms() {
+  const isRealmOwner = useIsRealmOwner()
   const queryClient = useQueryClient()
   const router = useRouter()
   const toast = useToast()
@@ -86,6 +87,49 @@ export default function Farms() {
     }
   )
 
+  if (
+    farms.status === 'success' &&
+    Object.keys(farms.data.farms).length === 0
+  ) {
+    return (
+      <DetailLayout>
+        <RealmSection title="Notice">
+          {isRealmOwner ? (
+            <Text>
+              You currently have zero farms. You can build a farm below to get
+              started collecting more resources!
+            </Text>
+          ) : (
+            <Text>This realm currently has zero farms.</Text>
+          )}
+        </RealmSection>
+        {canBuild && isRealmOwner ? (
+          <Button
+            borderRadius="none"
+            colorScheme="brand"
+            flexDirection="column"
+            h={40}
+            isLoading={build.status === 'loading'}
+            justifyContent="space-around"
+            onClick={() => build.mutate()}
+            py={7}
+            rightIcon={<Hammer height={50} width={50} />}
+            sx={{
+              '&:hover': {
+                boxShadow: '5px 4px 0 #444',
+              },
+              transition: 'box-shadow 300ms linear',
+            }}
+            variant="outline"
+            w={60}
+          >
+            Build A Farm
+          </Button>
+        ) : null}
+      </DetailLayout>
+    )
+  }
+
   return (
     <DetailLayout>
       <RealmSection title="Resources">
@@ -114,7 +158,7 @@ export default function Farms() {
           </SimpleGrid>
         </RealmSection>
       ) : null}
-      {canBuild ? (
+      {canBuild && isRealmOwner ? (
         <Button
           borderRadius="none"
           colorScheme="brand"

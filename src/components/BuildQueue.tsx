@@ -32,12 +32,14 @@ export default function BuildQueue() {
                 {formatDistanceToNow(queue.data.buildTime)}
               </RealmAttribute>
             )}
-            <RealmAttribute title="Gain Slot">
-              <Resource
-                sx={{ marginTop: '0 !important' }}
-                {...queue.data.gainSlot}
-              />
-            </RealmAttribute>
+            {queue.data.gainSlot.value === '0/0' ? null : (
+              <RealmAttribute title="Gain Slot">
+                <Resource
+                  sx={{ marginTop: '0 !important' }}
+                  {...queue.data.gainSlot}
+                />
+              </RealmAttribute>
+            )}
           </>
         ) : (
           <>

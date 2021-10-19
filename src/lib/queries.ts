@@ -173,7 +173,7 @@ export async function getQueueForRealm({
   const bnQueueMod = await dataContract.queueMod(bnId)
 
   const queueLimit = bnQueueLimit.toNumber() + 1
-  const queueMod = bnQueueMod.toNumber() + 1
+  const queueMod = bnQueueMod.toNumber()
 
   const { provider } = dataContract
   const blockNumber = await provider.getBlockNumber()
