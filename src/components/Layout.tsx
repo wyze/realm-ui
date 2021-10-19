@@ -59,12 +59,7 @@ export default function Layout({ children }: LayoutProps) {
           </Flex>
         </Flex>
       </Box>
-      <Container
-        centerContent
-        justifyContent="center"
-        mt="3ch"
-        maxW="container.xl"
-      >
+      <Container centerContent justifyContent="center" maxW="container.xl">
         {children}
       </Container>
     </Flex>

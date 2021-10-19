@@ -38,7 +38,7 @@ export default function Actions() {
 
   const createOnSuccess = useCallback(
     (title: string) => () => {
-      queryClient.invalidateQueries([['realm', id]])
+      queryClient.invalidateQueries(['realm', id])
 
       toast({
         title,

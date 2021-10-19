@@ -3,25 +3,34 @@ import type { QueryFunctionContext } from 'react-query'
 import { ethers } from 'ethers'
 import { useCallback } from 'react'
 
+import { compareAsc, isAfter } from 'date-fns'
 import { useQueryClient } from 'react-query'
 
-import { getCityContract, getDataContract, getRealmContract } from './contract'
+import {
+  getCityContract,
+  getDataContract,
+  getFarmContract,
+  getRealmContract,
+} from './contract'
 
 interface ErrorWithValue extends Error {
   value: string
 }
 
 const dataIndexes = Array(7).fill(0)
+const farmIndexes = Array(9).fill(0)
 const featureIndexes = Array(3).fill(0)
 
-const resourceColors: Record<string, string> = {
-  Culture: '#d45caa',
-  Food: '#83c760',
-  Gold: '#ffb300',
-  Religion: '#a162dc',
-  Reputation: '#996a6a',
-  Technology: '#f1ea15',
-  Workforce: '#6b84cc',
+const farmIcons: Record<string, string> = {
+  Chocolate: '🍫',
+  Coffee: '☕️',
+  Corn: '🌽',
+  Honey: '🍯',
+  None: '🚜',
+  Rice: '🍚',
+  Tea: '🍃',
+  Wheat: '🍞',
+  Wine: '🍷',
 }
 
 const cityBuildCost = 50
@@ -70,6 +79,53 @@ export async function getRealmById({
   }
 }
 
+export async function getFarmsForRealm({
+  queryKey,
+}: QueryFunctionContext<['realm', string, 'farms']>) {
+  const [, id] = queryKey
+
+  const bnId = ethers.BigNumber.from(id)
+  const farmContract = getFarmContract()
+
+  const bnTotalFarms = await farmContract.totalFarms(bnId)
+  const totalFarms = bnTotalFarms.toNumber()
+
+  const resourceNames = await Promise.all(
+    farmIndexes.map(async (_, index) => farmContract.resourceNames(index))
+  )
+  const resources = await Promise.all(
+    resourceNames.map(async (name, index) => {
+      const bnValue = await farmContract.resources(bnId, index)
+      const value = bnValue.toNumber()
+      const icon = farmIcons[name]
+
+      return { icon, name, value }
+    })
+  )
+
+  const farmsByResource = await Promise.all(
+    Array(totalFarms)
+      .fill(0)
+      .map(async (_, index) => {
+        const bnResourceId = await farmContract.farms(bnId, index)
+        const resourceId = bnResourceId.toNumber()
+
+        return resourceNames[resourceId]
+      })
+  )
+
+  const farms = farmsByResource.reduce((acc, name) => {
+    const icon = farmIcons[name]
+    const value = (acc[name]?.value ?? 0) + 1
+
+    acc[name] = { icon, name, value }
+
+    return acc
+  }, {} as Record<string, { icon: string; name: string; value: number }>)
+
+  return { farms, resources }
+}
+
 const isErrorWithValue = (value: unknown): value is ErrorWithValue => {
   if (typeof value !== 'object' || value === null) {
     return false
@@ -101,6 +157,57 @@ export async function getNameForRealm({
   }
 }
 
+export async function getQueueForRealm({
+  queryKey,
+}: QueryFunctionContext<['realm', string, 'queue']>) {
+  const [, id] = queryKey
+
+  const bnId = ethers.BigNumber.from(id)
+  const dataContract = getDataContract()
+
+  const name = await dataContract.dataNames(2)
+  const bnResource = await dataContract.data(bnId, 2)
+  const resource = bnResource.toNumber()
+
+  const bnQueueLimit = await dataContract.queueLimit(bnId)
+  const bnQueueMod = await dataContract.queueMod(bnId)
+
+  const queueLimit = bnQueueLimit.toNumber() + 1
+  const queueMod = bnQueueMod.toNumber()
+
+  const { provider } = dataContract
+  const blockNumber = await provider.getBlockNumber()
+  const block = await provider.getBlock(blockNumber)
+  const timestamp = block.timestamp * 1000
+
+  const buildTimes = await Promise.all(
+    Array(queueLimit)
+      .fill(0)
+      .map(async (_, index) => {
+        const bnBuildTime = await dataContract.buildTime(bnId, index)
+        const buildTime = bnBuildTime.toNumber() * 1000
+        const canBuild = isAfter(timestamp, buildTime)
+
+        return { buildTime, canBuild }
+      })
+  )
+
+  const [buildTime] = buildTimes
+    .map(({ buildTime }) => buildTime)
+    .sort(compareAsc)
+
+  const queueAvailable = buildTimes.reduce(
+    (acc, { canBuild }) => acc + Number(!canBuild),
+    0
+  )
+
+  const canBuild = queueAvailable !== buildTimes.length
+  const gainSlot = { name, value: `${resource}/${queueMod}` }
+  const queue = `${queueAvailable}/${buildTimes.length}`
+
+  return { buildTime, canBuild, gainSlot, queue }
+}
+
 export async function getResourcesForRealm({
   queryKey,
 }: QueryFunctionContext<['realm', string, 'resources']>) {
@@ -128,9 +235,8 @@ export async function getResourcesForRealm({
       const bnValue = await dataContract.data(bnId, index)
       const value = bnValue.toNumber()
       const perTurn = resourcePerTurn[name]
-      const color = resourceColors[name]
 
-      return { color, name, perTurn, value }
+      return { name, perTurn, value }
     })
   )
 
