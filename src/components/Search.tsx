@@ -14,7 +14,7 @@ export default function Search() {
   const realmId = id.trim()
 
   return (
-    <InputGroup>
+    <InputGroup size="md" mt={'25px !important'}>
       <Input
         onChange={(event) => setId(event.target.value)}
         onKeyPress={(event) => {

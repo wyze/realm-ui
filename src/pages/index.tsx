@@ -44,25 +44,10 @@ export default function Home() {
         <title>Realm</title>
       </Head>
 
-      <HStack h={650} px={10} py={50} spacing={10} w="60vw">
-        <VStack spacing={150} w="17vw">
-          <Heading as="h3" size="md">
-            Total Realms
-          </Heading>
-          <Heading as="h3" size="md">
-            Create Realm
-          </Heading>
-          <Heading as="h3" size="md">
-            View Realm
-          </Heading>
-        </VStack>
-        <Divider borderColor="brand.900" orientation="vertical" />
-        <VStack spacing={115}>
-          <Heading>{currentTokens.data ?? 'Unknown'}</Heading>
-          <Mint />
-          <Search />
-        </VStack>
-      </HStack>
+      <Heading as="h1" mt="10" mb="0" textAlign={'center'}>
+        Choose your Realm
+      </Heading>
+      <Search />
     </VStack>
   )
 }
